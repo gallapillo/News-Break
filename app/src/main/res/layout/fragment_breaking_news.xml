@@ -12,7 +12,7 @@
         android:text="Breaking News"
         android:textSize="36sp"
         android:textStyle="bold"
-        android:fontFamily="@font/lato_bold"
+        android:fontFamily="@font/lato_light"
         app:layout_constraintBottom_toTopOf="@id/rvBreakingNews"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"

@@ -20,7 +20,7 @@
         android:title="Search news"
         android:onClick="onSearchNewsButtonDown"
         android:fontFamily="@font/lato_regular"
-        android:icon="@drawable/ic_all_news"
+        android:icon="@drawable/ic_search_news"
         android:state_checked="false"
         />
 </menu>
