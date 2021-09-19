@@ -12,7 +12,7 @@ import com.gallapillo.newsbreak.viewmodel.NewsViewModel
 
 class SavedNewsFragment : Fragment(R.layout.fragment_saved_news) {
 
-    lateinit var viewModel: NewsViewModel
+    lateinit var mViewModel: NewsViewModel
     private lateinit var mBinding: FragmentSavedNewsBinding
 
     override fun onCreateView(
@@ -26,7 +26,7 @@ class SavedNewsFragment : Fragment(R.layout.fragment_saved_news) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewModel = (activity as NewsActivity).mViewModel
+        mViewModel = (activity as NewsActivity).mViewModel
 
     }
 
