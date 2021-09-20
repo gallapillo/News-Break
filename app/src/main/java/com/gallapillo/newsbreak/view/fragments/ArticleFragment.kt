@@ -50,7 +50,7 @@ class ArticleFragment : Fragment(R.layout.fragment_article) {
         })
 
         mArticleViewModel.article.observe(viewLifecycleOwner, { article ->
-            showToast(article.title)
+
             fab.setOnClickListener {
                 mViewModel.saveArticle(article)
                 Snackbar.make(view, "News saved successfully!", Snackbar.LENGTH_SHORT).show()

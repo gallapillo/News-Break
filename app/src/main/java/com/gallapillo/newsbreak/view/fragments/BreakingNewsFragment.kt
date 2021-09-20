@@ -5,10 +5,12 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.AbsListView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.gallapillo.newsbreak.view.adapters.NewsAdapter
 import com.gallapillo.newsbreak.R
 import com.gallapillo.newsbreak.databinding.FragmentBreakingNewsBinding
@@ -16,6 +18,7 @@ import com.gallapillo.newsbreak.view.NewsActivity
 import com.gallapillo.newsbreak.viewmodel.ArticleViewModel
 import com.gallapillo.newsbreak.viewmodel.NewsViewModel
 import com.gallapillo.newsbreak.viewmodel.UrlViewModel
+import com.gallapillo.newsbreak.z_utils.Constants.Companion.QUERY_PAGE_SIZE
 import com.gallapillo.newsbreak.z_utils.Resource
 import com.gallapillo.newsbreak.z_utils.replaceFragment
 import kotlinx.android.synthetic.main.fragment_breaking_news.*
@@ -46,7 +49,6 @@ class BreakingNewsFragment : Fragment(R.layout.fragment_breaking_news) {
         setupRecyclerView()
 
         mNewsAdapter.setOnItemClickListener { article ->
-            mUrlPage = article.url
             //showToast(mUrlPage)
             mArticleViewModel.article.value = article
             mUrlViewModel.url.value = article.url
@@ -59,7 +61,12 @@ class BreakingNewsFragment : Fragment(R.layout.fragment_breaking_news) {
                 is Resource.Success -> {
                     hideProgressBar()
                     response.data?.let { newsResponse ->
-                        mNewsAdapter.differ.submitList(newsResponse.articles)
+                        mNewsAdapter.differ.submitList(newsResponse.articles.toList())
+                        val totalPages = newsResponse.totalResults / QUERY_PAGE_SIZE + 2
+                        isLastPage = mViewModel.breakingNewsPage == totalPages
+                        if (isLastPage) {
+                            rvBreakingNews.setPadding(0,0,0,0)
+                        }
                     }
                 }
                 is Resource.Error -> {
@@ -77,10 +84,45 @@ class BreakingNewsFragment : Fragment(R.layout.fragment_breaking_news) {
 
     private fun hideProgressBar() {
         paginationProgressBar.visibility = View.INVISIBLE
+        isLoading = false
     }
 
     private fun showProgressBar() {
         paginationProgressBar.visibility = View.VISIBLE
+        isLoading = true
+    }
+
+    var isLoading = false
+    var isLastPage = false
+    var isScrolling = false
+
+    val scrollListener = object : RecyclerView.OnScrollListener() {
+        override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+            super.onScrolled(recyclerView, dx, dy)
+
+            val layoutManager = recyclerView.layoutManager as LinearLayoutManager
+            val firstVisibleItemPosition = layoutManager.findFirstVisibleItemPosition()
+            val visibleItemCount = layoutManager.itemCount
+            val totalItemCount = layoutManager.itemCount
+
+            val isNotLoadingAndNotLastPage = !isLoading && !isLastPage
+            val isAtLastItem = firstVisibleItemPosition + visibleItemCount >= totalItemCount
+            val isNotAtBeginning = firstVisibleItemPosition >= 0
+            val isTotalMoreThanVisible = totalItemCount >= QUERY_PAGE_SIZE
+            val shouldPaginate = isNotLoadingAndNotLastPage && isAtLastItem && isNotAtBeginning
+                    && isTotalMoreThanVisible && isScrolling
+            if (shouldPaginate) {
+                mViewModel.getBreakingNews("us")
+                isScrolling = false
+            }
+        }
+
+        override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+            super.onScrollStateChanged(recyclerView, newState)
+            if (newState == AbsListView.OnScrollListener.SCROLL_STATE_TOUCH_SCROLL) {
+                isScrolling = true
+            }
+        }
     }
 
     private fun setupRecyclerView() {
@@ -88,6 +130,7 @@ class BreakingNewsFragment : Fragment(R.layout.fragment_breaking_news) {
         rvBreakingNews.apply {
             adapter = mNewsAdapter
             layoutManager = LinearLayoutManager(activity)
+            addOnScrollListener(this@BreakingNewsFragment.scrollListener)
         }
     }
 
