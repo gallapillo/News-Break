@@ -21,6 +21,7 @@ import com.gallapillo.newsbreak.viewmodel.UrlViewModel
 import com.gallapillo.newsbreak.z_utils.Constants.Companion.QUERY_PAGE_SIZE
 import com.gallapillo.newsbreak.z_utils.Resource
 import com.gallapillo.newsbreak.z_utils.replaceFragment
+import com.gallapillo.newsbreak.z_utils.showToast
 import kotlinx.android.synthetic.main.fragment_breaking_news.*
 
 class BreakingNewsFragment : Fragment(R.layout.fragment_breaking_news) {
@@ -73,6 +74,7 @@ class BreakingNewsFragment : Fragment(R.layout.fragment_breaking_news) {
                     hideProgressBar()
                     response.message?.let { message ->
                         Log.e(mTAG, "An error occurred: $message")
+                        showToast("An error occurred: $message")
                     }
                 }
                 is Resource.Loading -> {

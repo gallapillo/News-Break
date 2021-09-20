@@ -18,6 +18,7 @@ import com.gallapillo.newsbreak.viewmodel.NewsViewModel
 import com.gallapillo.newsbreak.z_utils.Constants
 import com.gallapillo.newsbreak.z_utils.Constants.Companion.SEARCH_NEWS_TIME_DELAY
 import com.gallapillo.newsbreak.z_utils.Resource
+import com.gallapillo.newsbreak.z_utils.showToast
 import kotlinx.android.synthetic.main.fragment_breaking_news.*
 import kotlinx.android.synthetic.main.fragment_search_news.*
 import kotlinx.android.synthetic.main.fragment_search_news.paginationProgressBar
@@ -77,6 +78,7 @@ class SearchNewsFragment : Fragment() {
                     hideProgressBar()
                     response.message?.let { message ->
                         Log.e(mTAG, "An error occured: $message")
+                        showToast("An error occurred: $message")
                     }
                 }
                 is Resource.Loading -> {

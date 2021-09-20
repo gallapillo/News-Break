@@ -33,7 +33,7 @@ class NewsActivity : AppCompatActivity() {
         replaceFragment(BreakingNewsFragment.newInstance())
 
         val newsRepository = NewsRepository(ArticleDatabase(this))
-        val viewModelProviderFactory = NewsViewModelProviderFactory(newsRepository)
+        val viewModelProviderFactory = NewsViewModelProviderFactory(application, newsRepository)
         mViewModel = ViewModelProvider(this, viewModelProviderFactory).get(NewsViewModel::class.java)
     }
 
