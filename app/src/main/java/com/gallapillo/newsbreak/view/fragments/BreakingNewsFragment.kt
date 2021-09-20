@@ -6,23 +6,30 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.gallapillo.newsbreak.view.adapters.NewsAdapter
 import com.gallapillo.newsbreak.R
 import com.gallapillo.newsbreak.databinding.FragmentBreakingNewsBinding
 import com.gallapillo.newsbreak.view.NewsActivity
+import com.gallapillo.newsbreak.viewmodel.ArticleViewModel
 import com.gallapillo.newsbreak.viewmodel.NewsViewModel
+import com.gallapillo.newsbreak.viewmodel.UrlViewModel
 import com.gallapillo.newsbreak.z_utils.Resource
+import com.gallapillo.newsbreak.z_utils.replaceFragment
 import kotlinx.android.synthetic.main.fragment_breaking_news.*
 
 class BreakingNewsFragment : Fragment(R.layout.fragment_breaking_news) {
 
-    lateinit var viewModel: NewsViewModel
-    lateinit var newsAdapter: NewsAdapter
+    lateinit var mViewModel: NewsViewModel
+    lateinit var mNewsAdapter: NewsAdapter
     private lateinit var mBinding: FragmentBreakingNewsBinding
+    private var mUrlPage = ""
+    private val mUrlViewModel: UrlViewModel by activityViewModels()
+    private val mArticleViewModel: ArticleViewModel by activityViewModels()
 
-    val TAG = "BreakingNewsFragment"
+    private val mTAG = "BreakingNewsFragment"
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -35,21 +42,30 @@ class BreakingNewsFragment : Fragment(R.layout.fragment_breaking_news) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewModel = (activity as NewsActivity).mViewModel
+        mViewModel = (activity as NewsActivity).mViewModel
         setupRecyclerView()
 
-        viewModel.breakingNews.observe(viewLifecycleOwner, Observer { response ->
+        mNewsAdapter.setOnItemClickListener { article ->
+            mUrlPage = article.url
+            //showToast(mUrlPage)
+            mArticleViewModel.article.value = article
+            mUrlViewModel.url.value = article.url
+            //showToast(mUrlViewModel.url.value.toString())
+            replaceFragment(ArticleFragment.newInstance())
+        }
+
+        mViewModel.breakingNews.observe(viewLifecycleOwner, Observer { response ->
             when(response) {
                 is Resource.Success -> {
                     hideProgressBar()
                     response.data?.let { newsResponse ->
-                        newsAdapter.differ.submitList(newsResponse.articles)
+                        mNewsAdapter.differ.submitList(newsResponse.articles)
                     }
                 }
                 is Resource.Error -> {
                     hideProgressBar()
                     response.message?.let { message ->
-                        Log.e(TAG, "An error occured: $message")
+                        Log.e(mTAG, "An error occurred: $message")
                     }
                 }
                 is Resource.Loading -> {
@@ -68,9 +84,9 @@ class BreakingNewsFragment : Fragment(R.layout.fragment_breaking_news) {
     }
 
     private fun setupRecyclerView() {
-        newsAdapter = NewsAdapter()
+        mNewsAdapter = NewsAdapter()
         rvBreakingNews.apply {
-            adapter = newsAdapter
+            adapter = mNewsAdapter
             layoutManager = LinearLayoutManager(activity)
         }
     }

@@ -3,6 +3,7 @@ package com.gallapillo.newsbreak.view
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.MenuItem
+import androidx.activity.viewModels
 import androidx.lifecycle.ViewModelProvider
 import com.gallapillo.newsbreak.R
 import com.gallapillo.newsbreak.databinding.ActivityNewsBinding
@@ -13,6 +14,7 @@ import com.gallapillo.newsbreak.view.fragments.SavedNewsFragment
 import com.gallapillo.newsbreak.view.fragments.SearchNewsFragment
 import com.gallapillo.newsbreak.viewmodel.NewsViewModel
 import com.gallapillo.newsbreak.viewmodel.NewsViewModelProviderFactory
+import com.gallapillo.newsbreak.viewmodel.UrlViewModel
 import com.gallapillo.newsbreak.z_utils.APP_ACTIVITY
 import com.gallapillo.newsbreak.z_utils.replaceFragment
 
