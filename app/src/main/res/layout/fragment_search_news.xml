@@ -8,7 +8,7 @@
         android:id="@+id/tvSearchNews"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Search News"
+        android:text="@string/search_news"
         android:textSize="36sp"
         app:layout_constraintStart_toStartOf="parent"
         android:layout_marginStart="18dp"
@@ -30,7 +30,7 @@
         android:paddingBottom="8dp"
 
         android:fontFamily="@font/lato_regular"
-        android:hint="Search..."
+        android:hint="@string/search"
         android:textColor="@color/white"
         android:textColorHint="@color/white"
         android:background="@drawable/bg_search_input"
