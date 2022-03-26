@@ -1,4 +1,4 @@
-# News braeak - kotlin news App
+# News break - kotlin news App
 
 ## Used technologies
 
